@@ -1,18 +1,72 @@
-// require in the database adapter functions as you write them (createUser, createActivity...)
-// const { } = require('./');
 const client = require('./client');
 
-async function dropTables() {
-  console.log('Dropping All Tables...');
-  // drop all tables, in the correct order
+const { createUser, getUser } = require("./users");
+const { createActivity, getAllActivities} = require("./activities");
+const { createRoutine, getRoutinesWithoutActivities } = require("./routines");
+const { addActivityToRoutine } = require("./routine_activities");
 
+async function dropTables() {
+
+  console.log("Dropping All Tables...")
+  // drop all tables, in the correct order
+  await client.query(`
+    DROP TABLE IF EXISTS users CASCADE;
+    DROP TABLE IF EXISTS activities CASCADE;
+    DROP TABLE IF EXISTS routines CASCADE;
+    DROP TABLE IF EXISTS routine_activities CASCADE;
+  `)
+  console.log("All Tables Dropped")
+ 
 }
+
+
+  // drop test table
+
 
 async function createTables() {
-  console.log("Starting to build tables...");
+  
+  console.log("Starting to build tables...")
   // create all tables, in the correct order
 
+  // create a user table with username and password columns
+    await client.query(`
+    CREATE TABLE users (
+      id SERIAL PRIMARY KEY,
+      username VARCHAR(255) UNIQUE NOT NULL,
+      password VARCHAR(255) NOT NULL
+    );`);
+
+    // create an activity table with name and description columns
+    await client.query(`
+    CREATE TABLE activities (
+      id SERIAL PRIMARY KEY,
+      name VARCHAR(255) UNIQUE NOT NULL,
+      description VARCHAR(255) NOT NULL
+    );`);
+    
+    // cretes a Routines tale with creatorId isPulic name and goal columns
+    await client.query(`
+    CREATE TABLE routines (
+      id SERIAL PRIMARY KEY,
+      creatorId INTEGER REFERENCES users(id) ON DELETE CASCADE,
+      isPublic BOOLEAN NOT NULL DEFAULT false,
+      name VARCHAR(255) NOT NULL,
+      goal VARCHAR(255) NOT NULL
+    );`);
+
+    // creques a RoutineActivities table with routineId activityId count and duration columns
+    await client.query(`
+    CREATE TABLE routine_activities (
+      id SERIAL PRIMARY KEY,
+      routineId INTEGER REFERENCES routines(id) ON DELETE CASCADE,
+      activityId INTEGER REFERENCES activities(id) ON DELETE CASCADE,
+      count INTEGER NOT NULL,
+      duration INTEGER NOT NULL
+    );`);
+    console.log("Tables Built")
+  
 }
+
 
 /* 
 
