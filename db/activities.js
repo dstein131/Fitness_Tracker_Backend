@@ -43,7 +43,7 @@ async function attachActivitiesToRoutines(routines) {
     // attach activities to routines
     const result = await client.query(`
       INSERT INTO routine_activities (routineid, activityid)
-      SELECT id, activityid FROM routines
+      SELECT id, activityid FROM routine_activities
       WHERE id = ANY($1::int[])
     `, [routines.map(routine => routine.id)]);
 

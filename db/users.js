@@ -1,67 +1,68 @@
-const client = require("./client");
+const client = require('./client');
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
 
+const createUser = async ({ username, password }) => {
+    const hash = await bcrypt.hash(password, saltRounds);
+    try {
+        const { rows: [user] } = await client.query(`
+            INSERT INTO users (username, password)
+            VALUES ($1, $2)
+            RETURNING *;
+        `, [ username, hash ]);
+        delete user.password;
+        return user;
+    } catch (error) {
+        throw error;
+    }
+};
 
-// database functions
+const getUser = async ({ username, password }) => {
+    try {
+        const { rows: [user] } = await client.query(`
+            SELECT * FROM users
+            WHERE username = $1;
+        `, [ username ]);
+        if(user){
+            const match = await bcrypt.compare(password, user.password);
+            if (match) {
+                delete user.password;
+                return user;
+            }
+        }
+    } catch (error) {
+        throw error;
+    }
+};
 
-// user functions
-async function createUser({ username, password }) {
+const getUserById = async (id) => {
+    try {
+        const { rows: [user] } = await client.query(`
+            SELECT * FROM users
+            WHERE id = $1;
+        `, [ id ]);
+        delete user.password;
+        return user;
+    } catch (error) {
+        throw error;
+    }
+};
 
-  // create a new user
-  const result = await client.query(`
-    INSERT INTO users (username, password)
-    VALUES ($1, $2)
-    RETURNING id, username;
-  `, [username, password]);
-
-  // return the new user
-  return result.rows[0];
-
-  
-}
-
-async function getUser({ username, password }) {
-
-  // get a user by username and password
-  const result = await client.query(`
-    SELECT * FROM users
-    WHERE username = $1 AND password = $2;
-  `, [username, password]);
-
-  // return the user
-  return result.rows[0];
-
-}
-
-async function getUserById(userId) {
-
-  // get a user by id
-  const result = await client.query(`
-    SELECT * FROM users
-    WHERE id = $1;
-  `, [userId]);
-
-  // return the user
-  return result.rows[0];
-
-
-}
-
-async function getUserByUsername(userName) {
-
-  // get a user by username
-  const result = await client.query(`
-    SELECT * FROM users
-    WHERE username = $1;
-  `, [userName]);
-
-  // return the user
-  return result.rows[0];
-
+const getUserByUsername = async (username) => {
+    try {
+        const { rows: [user] } = await client.query(`
+            SELECT id FROM users
+            WHERE username = $1
+        `, [username])
+        return user;
+    } catch (e) {
+        throw e;
+    }
 }
 
 module.exports = {
-  createUser,
-  getUser,
-  getUserById,
-  getUserByUsername,
-}
+    createUser,
+    getUser,
+    getUserById,
+    getUserByUsername
+};
