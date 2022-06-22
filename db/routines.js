@@ -45,7 +45,7 @@ async function getPublicRoutinesByUser({username}) {
   const result = await client.query(`
     SELECT * FROM routines
     WHERE creator_id = (SELECT id FROM users WHERE username = $1)
-    AND is_public = true;
+    AND ispublic = true;
   `, [username]);
 
   return result.rows;
@@ -55,7 +55,7 @@ async function getAllPublicRoutines() {
 
   const result = await client.query(`
     SELECT * FROM routines
-    WHERE is_public = true;
+    WHERE ispublic = true;
   `);
 
   return result.rows;

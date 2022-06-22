@@ -13,14 +13,14 @@ server.use(cors());
 server.use(morgan('dev'));
 server.use(bodyParser.json());
 
-const apiRouter = require('./api');
+const apiRouter = require("./api");
 server.use('/api', apiRouter);
 
 server.get('/', async (req, res, next) => {
     res.send('Welcome to Fitness Trac.kr');
 });
 
-const { PORT = 3000 } = process.env;
+const PORT = 3000
 server.listen(PORT, () => {
     console.log(`listening at http://localhost:${PORT}`);
     client.connect();

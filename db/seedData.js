@@ -5,68 +5,55 @@ const { createActivity, getAllActivities} = require("./activities");
 const { createRoutine, getRoutinesWithoutActivities } = require("./routines");
 const { addActivityToRoutine } = require("./routine_activities");
 
-async function dropTables() {
-
-  console.log("Dropping All Tables...")
-  // drop all tables, in the correct order
-  await client.query(`
-    DROP TABLE IF EXISTS users CASCADE;
-    DROP TABLE IF EXISTS activities CASCADE;
-    DROP TABLE IF EXISTS routines CASCADE;
-    DROP TABLE IF EXISTS routine_activities CASCADE;
-  `)
-  console.log("All Tables Dropped")
- 
-}
-
-
-  // drop test table
-
-
-async function createTables() {
-  
-  console.log("Starting to build tables...")
-  // create all tables, in the correct order
-
-  // create a user table with username and password columns
+const dropTables = async () => {
+  console.log('Dropping All Tables...');
+  try {
     await client.query(`
-    CREATE TABLE users (
-      id SERIAL PRIMARY KEY,
-      username VARCHAR(255) UNIQUE NOT NULL,
-      password VARCHAR(255) NOT NULL
-    );`);
+      DROP TABLE IF EXISTS routine_activities;
+      DROP TABLE IF EXISTS routines;
+      DROP TABLE IF EXISTS activities;
+      DROP TABLE IF EXISTS users;
+    `);
+  } catch (error) {
+    throw (error);
+  };
+};
 
-    // create an activity table with name and description columns
+const createTables = async () => {
+  console.log("Starting to build tables...");
+  try {
     await client.query(`
-    CREATE TABLE activities (
-      id SERIAL PRIMARY KEY,
-      name VARCHAR(255) UNIQUE NOT NULL,
-      description VARCHAR(255) NOT NULL
-    );`);
-    
-    // cretes a Routines tale with creatorId isPulic name and goal columns
-    await client.query(`
-    CREATE TABLE routines (
-      id SERIAL PRIMARY KEY,
-      creatorId INTEGER REFERENCES users(id) ON DELETE CASCADE,
-      isPublic BOOLEAN NOT NULL DEFAULT false,
-      name VARCHAR(255) NOT NULL,
-      goal VARCHAR(255) NOT NULL
-    );`);
-
-    // creques a RoutineActivities table with routineId activityId count and duration columns
-    await client.query(`
-    CREATE TABLE routine_activities (
-      id SERIAL PRIMARY KEY,
-      routineId INTEGER REFERENCES routines(id) ON DELETE CASCADE,
-      activityId INTEGER REFERENCES activities(id) ON DELETE CASCADE,
-      count INTEGER NOT NULL,
-      duration INTEGER NOT NULL
-    );`);
-    console.log("Tables Built")
-  
-}
-
+      CREATE TABLE users(
+        id SERIAL PRIMARY KEY,
+        username VARCHAR(255) UNIQUE NOT NULL,
+        password VARCHAR(255) NOT NULL
+      );
+      
+      CREATE TABLE activities(
+        id SERIAL PRIMARY KEY,
+        name VARCHAR(255) UNIQUE NOT NULL,
+        description TEXT NOT NULL
+      );
+      CREATE TABLE routines(
+        id SERIAL PRIMARY KEY,
+        creatorid INTEGER REFERENCES users(id),
+        ispublic BOOLEAN DEFAULT false NOT NULL,
+        name VARCHAR(255) UNIQUE NOT NULL,
+        goal TEXT NOT NULL
+      );
+      CREATE TABLE routine_activities(
+        id SERIAL PRIMARY KEY,
+        routineid INTEGER REFERENCES routines(id),
+        activityid INTEGER REFERENCES activities(id),
+        duration INTEGER,
+        count INTEGER,
+        UNIQUE (routineid, activityid)
+      );
+    `);
+  } catch (error) {
+    throw error
+  };
+};
 
 /* 
 

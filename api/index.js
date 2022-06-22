@@ -3,29 +3,36 @@
 // export the api router
 
 
+
+const jwt = require('jsonwebtoken');
+const { JWT_SECRET } = process.env;
+
+
 const express = require('express');
-const router = express.Router();
+const apiRouter = express.Router();
+
+
 
 // GET /api/health
-router.get('/health', async (req, res, next) => {
+apiRouter.get('/health', async (req, res, next) => {
     res.send('OK');
     next()
 });
 
 // ROUTER: /api/users
 const usersRouter = require('./users');
-router.use('/users', usersRouter);
+apiRouter.use('/users', usersRouter);
 
 // ROUTER: /api/activities
 const activitiesRouter = require('./activities');
-router.use('/activities', activitiesRouter);
+apiRouter.use('/activities', activitiesRouter);
 
 // ROUTER: /api/routines
 const routinesRouter = require('./routines');
-router.use('/routines', routinesRouter);
+apiRouter.use('/routines', routinesRouter);
 
 // ROUTER: /api/routine_activities
 const routineActivitiesRouter = require('./routineActivities');
-router.use('/routine_activities', routineActivitiesRouter);
+apiRouter.use('/routine_activities', routineActivitiesRouter);
 
-module.exports = router;
+module.exports = apiRouter;
