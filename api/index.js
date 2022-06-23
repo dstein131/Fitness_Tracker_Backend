@@ -1,8 +1,7 @@
+
 const express = require("express");
 const apiRouter = express.Router();
-const jwt = require("jsonwebtoken");
-const { JWT_SECRET } = process.env;
-const { getUserById } = require("../db/users");
+
 
 // create a route that 
 
@@ -18,20 +17,17 @@ apiRouter.get("/health", async(req, res, next) => {
 })
 
 
-// create a router that uses /api/users as the base path
-const userRouter = require("./users");
-apiRouter.use("/users", userRouter);
+const usersRouter = require("./users");
+apiRouter.use("/users", usersRouter);
 
-// ROUTER: /api/activities
-const activitiesRouter = require('./activities');
-apiRouter.use('/api/', activitiesRouter);
+const activitiesRouter = require("./activities");
+apiRouter.use("/activities", activitiesRouter);
 
-// ROUTER: /api/routines
-const routinesRouter = require('./routines');
-apiRouter.use('/routines', routinesRouter);
+const routinesRouter = require("./routines");
+apiRouter.use("/routines", routinesRouter);
 
-// ROUTER: /api/routine_activities
-const routineActivitiesRouter = require('./routineActivities');
-apiRouter.use('/routine_activities', routineActivitiesRouter);
+const routineActivitiesRouter = require("./routineActivities");
+apiRouter.use("/routine_activities", routineActivitiesRouter);
 
 module.exports = apiRouter;
+
