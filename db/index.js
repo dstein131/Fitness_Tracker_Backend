@@ -1,8 +1,11 @@
-// require and re-export all files in this db directory (users, activities...)
+
+const { client } = require("./client");
+
 module.exports = {
-    ...require('./client'),
-    ...require('./users'), 
-    ...require('./activities'), 
-    ...require('./routines'),
-    ...require('./routine_activities')
-}
+  client,
+  ...require("./client"), // re-export client for use in our server file
+  ...require("./users"), // adds key/values from users.js
+  ...require("./activities"), // adds key/values from activites.js
+  ...require("./routines"), // etc
+  ...require("./routine_activities"), // etc
+};

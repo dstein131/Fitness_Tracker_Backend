@@ -1,9 +1,9 @@
 const express = require('express');
-const router = express.Router();
+const activitiesRouter = express.Router();
 const {getActivityById, getAllActivities} = require('../db/activities');
 
 // GET /api/activities/:activityId/routines
-router.get('/:activityId/routines', async (req, res, next) => {
+activitiesRouter.get('/:activityId/routines', async (req, res, next) => {
     const activityId = req.params.activityId;
     const activity = await getActivityById(activityId);
     if (activity) {
@@ -16,7 +16,7 @@ router.get('/:activityId/routines', async (req, res, next) => {
 );
 
 // GET /api/activities
-router.get('/', async (req, res, next) => {
+activitiesRouter.get('/', async (req, res, next) => {
     const activities = await getAllActivities();
     res.send(activities);
     next()
@@ -25,7 +25,7 @@ router.get('/', async (req, res, next) => {
 
 
 // POST /api/activities
-router.post('/', async (req, res, next) => {
+activitiesRouter.post('/', async (req, res, next) => {
     const activity = req.body;
     res.send(activity);
     next()
@@ -34,4 +34,4 @@ router.post('/', async (req, res, next) => {
 
 // PATCH /api/activities/:activityId
 
-module.exports = router;
+module.exports = activitiesRouter;

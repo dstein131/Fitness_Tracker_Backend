@@ -1,6 +1,5 @@
 const client = require('./client');
-const util = require('util');
-const { getRoutineActivitiesByRoutine } = require('.');
+
 
 const createRoutine = async ({ creatorId, isPublic, name, goal }) => {
 

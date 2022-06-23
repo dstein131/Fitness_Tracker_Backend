@@ -1,22 +1,41 @@
 const express = require('express');
-const router = express.Router();
-const { getUser, createUser, getUserById, getUserByUsername } = require('../db/users');
+const userRouter = express.Router();
+// const { getUser, createUser, getUserById, getUserByUsername } = require('../db/users');
+const { getUserByUsername, getUser, createUser, getUserById, getPublicRoutinesByUser } = require("../db");
 
+
+
+// Logs in the user. Requires username and password, and verifies that hashed login password matches the saved hashed password.
+// If successful, returns the user object.
+// If unsuccessful, returns a 404 status code and an error message.
 // POST /api/users/login
-router.post('/login', async (req, res, next) => {
+userRouter.post('/login', async (req, res, next) => {
+    console.log("login TEST");
+   try {
     const { username, password } = req.body;
-    const user = await getUser({ username, password });
+    const hash = await bcrypt.hash(password, saltRounds);
+    const user = await getUser({ username, password: hash });
     if (user) {
+        delete user.password;
         res.send(user);
-    } else {
-        res.status(401).send('Invalid username or password');
     }
-    next()
-})
+    else {
+        res.status(404).send('User not found');
+    }
+    } catch (error) {
+        throw error;
+
+    
+   }
+}
+);
+
+
+
 
 // POST /api/users/register
 // Create a new user. Require username and password, and hash password before saving user to DB. Require all passwords to be at least 8 characters long.
-router.post('/register', async (req, res, next) => {
+userRouter.post('/register', async (req, res, next) => {
     const { username, password } = req.body;
     if (password.length < 8) {
         res.status(400).send('Password must be at least 8 characters long');
@@ -30,7 +49,7 @@ router.post('/register', async (req, res, next) => {
 
 // GET /api/users/me
 // Get the current user.
-router.get('/me', async (req, res, next) => {
+userRouter.get('/me', async (req, res, next) => {
     const user = await getUserById(req.user.id);
     res.send(user);
     next()
@@ -39,7 +58,7 @@ router.get('/me', async (req, res, next) => {
 
 // GET /api/users/:username/routines
 // Get all routines for a user.
-router.get('/:username/routines', async (req, res, next) => {
+userRouter.get('/:username/routines', async (req, res, next) => {
     const user = await getUserByUsername(req.params.username);
     if (user) {
         res.send(user.routines);
@@ -50,4 +69,4 @@ router.get('/:username/routines', async (req, res, next) => {
 }
 )
 
-module.exports = router;
+module.exports = userRouter;

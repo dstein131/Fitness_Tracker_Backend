@@ -11,10 +11,10 @@ console.log('Dropping All Tables...');
 // drop all tables, in the correct order
   try {
       await client.query(`
-          DROP TABLE IF EXISTS routine_activities;
-          DROP TABLE IF EXISTS routines;
-          DROP TABLE IF EXISTS activities;
-          DROP TABLE IF EXISTS users;
+      DROP TABLE IF EXISTS routine_activities;
+      DROP TABLE IF EXISTS routines;
+      DROP TABLE IF EXISTS activities;
+      DROP TABLE IF EXISTS users; 
       `);
       console.log('Successfully Dropped All Tables');
   } catch (error) {
