@@ -12,18 +12,24 @@ const getRoutineActivityById = async (id) => {
     }
 }
 
-const addActivityToRoutine = async ({ routineId, activityId, count, duration }) => {
+async function addActivityToRoutine({
+    routineId,
+    activityId,
+    count,
+    duration,
+  }) {
     try {
-        const { rows: [routine_activity] } = await client.query(`
-           INSERT INTO routine_activities( "routineId", "activityId", count, duration )
-           VALUES ( $1, $2, $3, $4 )
-           RETURNING *;
-        `,[ routineId, activityId, count, duration ]);
-        return routine_activity;
+      const { rows } = await client.query(
+        `
+      INSERT INTO routine_activities ("routineId", "activityId", count, duration) VALUES ($1,$2,$3,$4) RETURNING *`,
+        [routineId, activityId, count, duration]
+      );
+  
+      return rows[0];
     } catch (error) {
-        throw error;
+      throw error;
     }
-}
+  }
 
 const getRoutineActivitiesByRoutine = async ({id}) => {
     try {
@@ -69,19 +75,18 @@ const updateRoutineActivity = async ({id, ...fields}) => {
     }
 }
 
-const destroyRoutineActivity = async (id) => {
+async function destroyRoutineActivity(id) {
     try {
-        const { rows: [ra] } = await client.query(`
-            DELETE FROM routine_activities
-            WHERE id=$1
-            RETURNING *;
-        `, [id]);
-        return ra;
+      const {rows: [routineActivity]} = await client.query(`
+          DELETE FROM routine_activities 
+          WHERE id = $1
+          RETURNING *;
+      `, [id]);
+      return routineActivity;
     } catch (error) {
-        console.error(error);
-        throw error;
+      throw error;
     }
-}
+  }
 
 module.exports = {
     addActivityToRoutine,

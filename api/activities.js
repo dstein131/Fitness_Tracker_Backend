@@ -9,15 +9,17 @@ const {
 const { requireUser } = require("./utils");
 
 // GET /api/activities/:activityId/routines
-activitiesRouter.get('/:activityId/routines', async (req, res, next) => {
-    const activityId = req.params.activityId;
-    const activity = await getActivityById(activityId);
-    if (activity) {
-        res.send(activity.routines);
-    } else {
-        res.status(404).send('Activity not found');
+activitiesRouter.get("/:activityId/routines", async (req, res, next) => {
+    const activityId  = req.params.activityId
+    try {
+        const routines = await getPublicRoutinesByActivity({id: activityId});
+        
+            res.send(routines);
+      
     }
-    next()
+    catch (error) {
+        next(error);
+    }
 }
 );
 
@@ -26,8 +28,7 @@ activitiesRouter.get("/", async (req, res, next) => {
     try {
         const activities = await getAllActivities();
         res.send(activities);
-    }
-    catch (error) {
+    } catch (error) {
         next(error);
     }
 }
@@ -46,38 +47,23 @@ activitiesRouter.post('/', requireUser, async (req, res, next) => {
 }
 );
 
-// PATCH /api/activities/:activityId
-activitiesRouter.patch('/:activityId', requireUser, async (req, res, next) => {
+//PATCH anyone can update any activity
+activitiesRouter.patch("/:activityId", requireUser, async (req, res, next) => {
     try {
-        const activity = await updateActivity(req.params.activityId, req.body);
-        if (activity) {
-            res.send(activity);
-        }
-        else {
-            res.status(404).send('Activity not found');
-        }
-    }
-    catch (error) {
-        next(error);
-    }
-}
-);
-
-activitiesRouter.get("/:activityId/routines", async (req, res, next)=> {
-    
-    try {
-        const routines = await getPublicRoutinesByActivity(req.params.activityId)
-        if (routines) {
-            res.send(routines);
-          } else {
-            throw({
-              name: "NoneFound",
-              message: `No Routines were found with Activity ${id}`,
-            })
-        }
+      const { activityId } = req.params;
+      const { name, description } = req.body;
+      const newActivity = await updateActivity({
+        id: activityId,
+        name,
+        description,
+      });
+      if (newActivity) {
+        res.send(newActivity);
+      }
     } catch (error) {
-        
+      next(error);
     }
-})
+  });
+
 
 module.exports = activitiesRouter;

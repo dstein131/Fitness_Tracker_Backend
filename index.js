@@ -6,9 +6,11 @@ const PORT = process.env.PORT || 3000;
 const express = require("express");
 const server = express();
 const morgan = require("morgan");
+const bodyParser = require("body-parser");
 
 server.use(morgan("dev"));
 server.use(express.json());
+server.use(bodyParser.json());
 
 const cors = require("cors");
 server.use(cors());
