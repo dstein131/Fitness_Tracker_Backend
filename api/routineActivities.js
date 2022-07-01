@@ -1,5 +1,6 @@
-const express = require('express');
+const express = require("express");
 const routineActivitiesRouter = express.Router();
+
 const { requireUser, requiredNotSent } = require("./utils");
 const { getRoutineActivityById, updateRoutineActivity, destroyRoutineActivity, canEditRoutineActivity } = require("../db");
 const { getRoutineById } = require("../db/routines");
@@ -48,7 +49,6 @@ routineActivitiesRouter.patch('/:routineActivityId', requireUser, requiredNotSen
     } catch (error) {
       next(error);
     }
-  }
-  );
+  });
 
 module.exports = routineActivitiesRouter;
