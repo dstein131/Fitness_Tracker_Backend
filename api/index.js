@@ -40,7 +40,7 @@ const routineRouter = require("./routines");
 const { getUserById } = require("../db");
 apiRouter.use("/routines", routineRouter);
 
-const routineActivityRouter = require("./routineActivities")
+const routineActivityRouter = require("./routineActivities");
 apiRouter.use("/routine_activities", routineActivityRouter);
 
 module.exports = apiRouter;
