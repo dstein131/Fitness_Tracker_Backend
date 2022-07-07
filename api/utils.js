@@ -9,16 +9,6 @@ function requireUser(req, res, next) {
   next();
 }
 
-function requireActiveUser(req, res, next) {
-  if (!req.user.active) {
-    next({
-      name: "UserInactiveError",
-      message: "Current user has previously been deactivated",
-    });
-  }
-  next();
-}
-
 const requiredNotSent = ({ requiredParams, atLeastOne = false }) => {
   return (req, res, next) => {
     if (atLeastOne) {
